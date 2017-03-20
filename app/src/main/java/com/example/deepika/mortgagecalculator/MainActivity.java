@@ -40,14 +40,17 @@ public class MainActivity extends AppCompatActivity {
         bcalculate = (Button)findViewById(R.id.bcalculate);
         bclear = (Button)findViewById(R.id.bclear);
         bsave = (Button) findViewById(R.id.bsave);
-        //bcalculate.setEnabled(false);
 
         bsave.setEnabled(false);
 
         final EditText e_street = (EditText) findViewById(R.id.street);
         final EditText e_city = (EditText) findViewById(R.id.city);
-        final EditText e_state = (EditText) findViewById(R.id.state);
+        //final EditText e_state = (EditText) findViewById(R.id.state);
         final EditText e_zip = (EditText) findViewById(R.id.zip);
+        final Spinner state = (Spinner) findViewById(R.id.state);
+        String[] list1 = new String[]{"California", "Alabama", "Alaska"};
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(MainActivity.this, R.layout.support_simple_spinner_dropdown_item, list1);
+        state.setAdapter(adapter1);
 
         TextWatcher tw = new TextWatcher() {
             @Override
@@ -66,8 +69,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        e_street.addTextChangedListener(tw);
+        //e_street.addTextChangedListener(tw);
         e_zip.addTextChangedListener(tw);
+
+
 
 
 
@@ -81,10 +86,12 @@ public class MainActivity extends AppCompatActivity {
         bcalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 pp = Integer.parseInt(property_price.getText().toString());
                 dp = Integer.parseInt(down_payment.getText().toString());
                 rate = Integer.parseInt(annual_rate.getText().toString());
                 period = Integer.parseInt(term.getText().toString());
+
 
                 payment = calculate_mortgage(pp, dp, rate, period);
                 m_payment.setText(String.valueOf(payment));
@@ -100,30 +107,32 @@ public class MainActivity extends AppCompatActivity {
                 annual_rate.setText("");
                 term.setText("");
                 m_payment.setText("");
+                e_street.setText("");
+                e_city.setText("");
+                e_zip.setText("");
             }
         });
 
-
         final DatabaseOperations handler = new DatabaseOperations(getBaseContext(), TableData.TableInfo.DATABASE_NAME, null, 1);
+
         bsave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
 
-                String street = e_street.getText().toString();
-                String city = e_city.getText().toString();
-                String state = e_state.getText().toString();
-                String zip = e_zip.getText().toString();
+                final String street = e_street.getText().toString();
+                final String city = e_city.getText().toString();
+                final String state1 = state.getSelectedItem().toString();
+                final String zip = e_zip.getText().toString();
                 List<Address> addresses = null;
-                try
-                {
-                    addresses = validate_address(street, city, state, zip);
+                try {
+                    addresses = validate_address(street, city, state1, zip);
                 }
                 catch (Exception e){e.printStackTrace();}
 
-                if (addresses.size() >= 1)
-                {
+                if (addresses.size() >= 1) {
+
                     handler.getWritableDatabase();
-                    long k = handler.insertInfo(handler, street, city, state, String.valueOf(payment));
+                    long k = handler.insertInfo(handler, street, city, state1, String.valueOf(payment));
                     /*Cursor c = handler.getInfo(handler);
                     int count = c.getCount();
                     c.moveToFirst();
@@ -132,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
                     String demo3 = c.getString(2);*/
                     handler.close();
                     Log.d("Save", String.valueOf(k));
-
                 }
             }
 
