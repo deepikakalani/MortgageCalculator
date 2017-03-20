@@ -10,52 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.deepika.mortgagecalculator.MainActivity">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-
-        android:layout_marginTop="59dp"
-        android:id="@+id/propertyprice"
-        android:hint="Property price"
-        android:inputType="number" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:layout_below="@+id/propertyprice"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="32dp"
-        android:id="@+id/downpayment"
-        android:hint="Downpayment" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="10"
-
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/rate"
-        android:hint="Annual Rate(%)" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:layout_below="@+id/rate"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="38dp"
-        android:id="@+id/period"
-        android:hint="Number of years" />
-
     <TextView
 
         android:layout_width="wrap_content"
@@ -65,22 +19,144 @@
         android:layout_marginTop="16dp"
         android:id="@+id/text_monthly_payment" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:layout_marginTop="30dp"
+        android:id="@+id/downpayment"
+        android:hint="Downpayment"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+
+        android:id="@+id/rate"
+        android:hint="Annual Rate(%)"
+        android:layout_below="@+id/downpayment"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="Street"
+        android:ems="10"
+        android:id="@+id/street"
+        android:layout_below="@+id/period"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="44dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="City"
+        android:ems="10"
+        android:id="@+id/city"
+        android:layout_below="@+id/street"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="state"
+        android:ems="10"
+        android:layout_below="@+id/city"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="11dp"
+        android:id="@+id/state" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="zip"
+        android:ems="10"
+        android:layout_below="@+id/state"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/zip" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/period"
+        android:hint="Number of years"
+        android:layout_below="@+id/rate"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_below="@+id/period"
+        android:layout_toLeftOf="@+id/text_monthly_payment" />
+
+    <TextView
+        android:text="Property type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/label"
+        android:layout_alignBottom="@+id/spinner"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+
+        android:id="@+id/propertyprice"
+        android:hint="Property price"
+        android:inputType="number"
+        android:layout_above="@+id/rate"
+        android:layout_alignRight="@+id/bcalculate"
+        android:layout_alignEnd="@+id/bcalculate"
+        android:layout_marginBottom="42dp" />
+
     <Button
         android:text="Calculate mortgage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
         android:id="@+id/bcalculate"
-        android:layout_below="@+id/period"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/zip"
+        android:layout_toLeftOf="@+id/text_monthly_payment"
+        android:layout_toStartOf="@+id/text_monthly_payment"
+        android:layout_marginRight="11dp"
+        android:layout_marginEnd="11dp" />
 
     <Button
         android:text="Clear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/bcalculate"
-        android:layout_toRightOf="@+id/period"
-        android:layout_toEndOf="@+id/period"
-        android:id="@+id/bclear" />
+        android:id="@+id/bclear"
+        android:layout_below="@+id/zip"
+        android:layout_toRightOf="@+id/propertyprice"
+        android:layout_toEndOf="@+id/propertyprice" />
+
+    <Button
+        android:text="Save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bsave"
+        android:layout_alignBaseline="@+id/bclear"
+        android:layout_alignBottom="@+id/bclear"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

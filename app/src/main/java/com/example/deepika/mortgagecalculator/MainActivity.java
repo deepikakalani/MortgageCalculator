@@ -1,22 +1,32 @@
 package com.example.deepika.mortgagecalculator;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.content.Context;
 
+import java.util.List;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
-    Button bcalculate, bclear;
-    int pp, dp, rate, period, sum;
+    Button bcalculate, bclear, bsave;
+    int pp, dp, rate, period, payment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +39,43 @@ public class MainActivity extends AppCompatActivity {
         final EditText term = (EditText)findViewById(R.id.period);
         bcalculate = (Button)findViewById(R.id.bcalculate);
         bclear = (Button)findViewById(R.id.bclear);
-        final TextView m_payment = (TextView)findViewById(R.id.text_monthly_payment);
-        final Button bsave = new Button(this);
-        bsave.setText("Save");
-        final RelativeLayout rl = (RelativeLayout)findViewById(R.id.activity_main);
-        final ActionBar.LayoutParams lp = new ActionBar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        bsave = (Button) findViewById(R.id.bsave);
+        //bcalculate.setEnabled(false);
 
-        final Intent intent = new Intent(getBaseContext(), SaveActivity.class);
+        bsave.setEnabled(false);
+
+        final EditText e_street = (EditText) findViewById(R.id.street);
+        final EditText e_city = (EditText) findViewById(R.id.city);
+        final EditText e_state = (EditText) findViewById(R.id.state);
+        final EditText e_zip = (EditText) findViewById(R.id.zip);
+
+        TextWatcher tw = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                bsave.setEnabled(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                bsave.setEnabled(true);
+            }
+        };
+
+        e_street.addTextChangedListener(tw);
+        e_zip.addTextChangedListener(tw);
+
+
+
+        Spinner dropdown = (Spinner) findViewById(R.id.spinner);
+        String[] list = new String[]{"House", "TownHouse", "Condo"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, R.layout.support_simple_spinner_dropdown_item, list);
+        dropdown.setAdapter(adapter);
+        final TextView m_payment = (TextView) findViewById(R.id.text_monthly_payment);
 
 
         bcalculate.setOnClickListener(new View.OnClickListener() {
@@ -46,13 +86,9 @@ public class MainActivity extends AppCompatActivity {
                 rate = Integer.parseInt(annual_rate.getText().toString());
                 period = Integer.parseInt(term.getText().toString());
 
-
-                int payment = calculate_mortgage(pp, dp, rate, period);
-
-                //sum = (pp-dp)*rate*period/100;
+                payment = calculate_mortgage(pp, dp, rate, period);
                 m_payment.setText(String.valueOf(payment));
 
-                rl.addView(bsave, lp);
             }
         });
 
@@ -64,28 +100,60 @@ public class MainActivity extends AppCompatActivity {
                 annual_rate.setText("");
                 term.setText("");
                 m_payment.setText("");
-                rl.removeView(bsave);
             }
         });
 
+
+        final DatabaseOperations handler = new DatabaseOperations(getBaseContext(), TableData.TableInfo.DATABASE_NAME, null, 1);
         bsave.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                intent.putExtra("monthly_amount", String.valueOf(sum));
-                startActivity(intent);
+            public void onClick(View v){
+
+                String street = e_street.getText().toString();
+                String city = e_city.getText().toString();
+                String state = e_state.getText().toString();
+                String zip = e_zip.getText().toString();
+                List<Address> addresses = null;
+                try
+                {
+                    addresses = validate_address(street, city, state, zip);
+                }
+                catch (Exception e){e.printStackTrace();}
+
+                if (addresses.size() >= 1)
+                {
+                    handler.getWritableDatabase();
+                    long k = handler.insertInfo(handler, street, city, state, String.valueOf(payment));
+                    /*Cursor c = handler.getInfo(handler);
+                    int count = c.getCount();
+                    c.moveToFirst();
+                    String demo = c.getString(0);
+                    String demo1 = c.getString(1);
+                    String demo3 = c.getString(2);*/
+                    handler.close();
+                    Log.d("Save", String.valueOf(k));
+
+                }
             }
+
         });
+
     }
 
     public int calculate_mortgage(int pp, int dp, int rate, int period){
-
-
         int principal = pp - dp;
         int r = (rate/12)/100;
         int n = period*12;
         int monthly_payment;
         monthly_payment = principal*(((r*(1+r)^n))/((1+r)^n -1));
         return monthly_payment;
+    }
+
+    public List<Address> validate_address(String addr, String city, String state, String zip) throws Exception{
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses = geocoder.getFromLocationName(addr + city + state, 3);
+        return addresses;
+
     }
 
 }
